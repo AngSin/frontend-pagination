@@ -5,7 +5,9 @@ import './App.css';
 const pageLimit = 10;
 
 function App() {
-  const [page, setPage] = useState(1);
+  const urlSearchParams = new URLSearchParams(window.location.search);
+  const pageParam = Number(urlSearchParams.get("page")) || 1;
+  const [page, setPage] = useState( pageParam);
   const [pokemonList, setPokemon] = useState([]);
   const [total, setTotal] = useState(0);
 
@@ -18,7 +20,7 @@ function App() {
     }
     const pageIndex = page - 1;
     fetchPokemon(pageIndex);
-  }, [page]);
+  }, [pageParam]);
 
   return (
     <>
@@ -42,7 +44,10 @@ function App() {
       </Table>
       <Pagination
         totalPages={Math.ceil(total/pageLimit)}
-        onPageChange={(e, d) => setPage(d.activePage)}
+        onPageChange={(e, d) => {
+          urlSearchParams.set("page", d.activePage);
+          window.location.search = urlSearchParams.toString();
+        }}
         activePage={page}
       />
     </>
